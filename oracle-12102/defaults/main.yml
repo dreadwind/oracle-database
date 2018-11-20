@@ -1,0 +1,43 @@
+old_mount: /opt
+vg_name: oracle
+lv_name: oracle
+volume_fs: xfs
+oracle_mount: /opt/u01
+oracle_db_port: 1521
+
+osuser:
+  group: oinstall
+  username: oracle
+  password: Passw0rd2017
+  dbagroup: dba
+  opergroup: oper
+
+oracle_database_base: /opt/u01/oracle/{{ oracle_db_name }}
+oracle_database_home: /opt/u01/oracle/{{ oracle_db_name}}/ora_home
+oracle_database_inventory_location: /opt/u01/oracle/oracle_inventory
+oracle_data_location: /opt/u01/oracle/product/oradata
+oracle_recovery_location: /opt/u01/oracle/recovery_area
+oracle_db_name: sfr_dev
+oracle_sid: sfr_dev
+
+oracle_db_password: <pass/>
+oracle_admin_password: <pass/>
+oracle_user_password:  <pass/>
+
+oracle_packages_requirements:
+    - gcc
+    - libaio
+    - libaio-devel
+    - sysstat
+    - elfutils-libelf-devel
+    - libstdc++
+    - libstdc++-devel
+    - gcc-c++
+    - unixODBC
+    - unixODBC-devel
+    - compat-libstdc++-33
+    - unzip
+
+oracle_db_zip: oracle_12102.zip
+nfs_sd: /nfs/OrcleDB-120102
+

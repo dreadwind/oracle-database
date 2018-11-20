@@ -1,0 +1,15 @@
+---
+- name: Prepare lvm for installation
+  include_tasks: ensure_lvm_status.yml
+
+- name: Prepare Server for installation
+  include_tasks: prepare_server.yml
+
+- name: Prepare disribitives
+  include_tasks: prepare_distrs.yml
+
+- name: Install Oracle Database
+  include_tasks: install_oradb.yml
+
+- name: Post Instalaltion Actions
+  include_tasks: post_install.yml

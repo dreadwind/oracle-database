@@ -1,0 +1,4 @@
+---
+- hosts: oratest
+  roles:
+  - oracle-12102
