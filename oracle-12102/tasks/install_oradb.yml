@@ -1,7 +1,0 @@
----
-- name: Preparing database installation template
-  template: src=db_install.rsp.j2 dest=/tmp/db_install.rsp
-
-- name: Install oracle on {{ansible_hostname}} with rsp
-  command: sudo -H -u oracle /tmp/database/runInstaller -silent -waitforcompletion -ignorePrereq  -ignoreSysPrereqs -responseFile /tmp/db_install.rsp
-  
