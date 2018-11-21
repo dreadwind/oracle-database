@@ -1,0 +1,23 @@
+# .bash_profile
+
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+        . ~/.bashrc
+fi
+
+# User specific environment and startup programs
+
+export ORACLE_HOSTNAME={{ ansible_hostname }}
+export ORACLE_INIQNAME=SFR
+export ORACLE_BASE={{ oracledb_base_location }}
+export ORACLE_HOME={{ oracledb_home_location }}
+export LD_LIBRARY_PATH={{ oracledb_home_location }}/lib:$LD_LIBRARY_PATH
+export NLS_LANG=AMERICAN_AMERICA.UTF8
+export ORACLE_SID={{ oracledb_sid }}
+export CLASSPATH={{ oracledb_home_location }}/jlib:{{ oracledb_home_location }}/rdms/jlib
+export PATH={{ oracledb_home_location }}/bin:$PATH
+
+export PATH=$PATH:/usr/ccs/bin
+export PATH={{ oracledb_home_location }}Opatch:$PATH
+
+alias sql='sqlplus / as sysdba'

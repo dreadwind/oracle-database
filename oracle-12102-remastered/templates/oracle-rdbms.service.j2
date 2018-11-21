@@ -1,0 +1,14 @@
+[Unit]
+Description=Oracle Database(s) and Listener
+Requires=network.target
+Before=oracle-ems.service
+
+[Service]
+Type=forking
+Restart=on-failure
+ExecStart={{ oracledb_home_location }}/bin/dbstart {[ oracledb_home_location }}
+ExecStop={{ oracledb_home_location }}/bin/dbshut {{ oracledb_home_location }}
+User={{ oracle.user }}
+
+[Install]
+WantedBy=multi-user.target

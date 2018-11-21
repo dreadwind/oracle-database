@@ -1,0 +1,53 @@
+---
+- name: Install required packages  on {{ ansible_hostname }}
+  yum: name={{ item }} state=present
+  with_items: "{{ oracle_required_packages }}"
+  tags: pkg_installed
+  
+#- name: Prepare sysctl params
+#  template: src=sysctl.conf.j2 dest=/etc/sysctl.conf
+
+- name: Set sysctl on {{ ansible_hostname }}  
+  sysctl: name={{ item.n }} value={{ item.v }} state=present reload=yes
+  with_items: "{{ oracle_sysctl_params }}"
+
+#- name: Configure SHM
+#  lineinfile:
+#    path: /etc/fstab
+#    line: 'none /dev/shm tmpfs defaults,size=16G 0 0'
+  
+- name: Add oracle system user and groups
+  group:
+    name: "{{ oracle.dbagroup }}"
+    state: present
+
+- name: Add and Oracle user 
+  user: 
+    name: "{{ oracle.user }}"
+    password: "{{ oracle.password }}"
+    comment: Oracle System User
+    group: "{{ oracle.dbagroup }}"
+    shell: /bin/bash
+    home: /home/{{ oracle.user }}
+    append: yes
+
+- name: Create oracle directories
+  file: path={{ item.path }} state=directory mode=0775 owner={{ oracle.user }}  group={{ oracle.dbagroup }}
+  with_items:
+     - { path: "{{ oracledb_home_location }}" }
+     - { path: "{{ oracledb_base_location }}" }
+     - { path: "{{ oracledb_inventory_location }}" }
+
+- name: Set bash_profile
+  template: src=bash_profile.j2 dest=/home/oracle/.bash_profile owner={{ oracle.user }} group={{ oracle.dbagroup }} mode=0644
+
+- name: Update Cloud config (for OEL 7.5 only)
+  template: src=hosts.redhat.tmpl.j2 dest=/etc/cloud/templates/hosts.redhat.tmpl
+  when: ansible_distribution == 'OracleLinux' and ansible_distribution_version == '7.5'
+
+- name: Update /etc/hosts (for OEL 7.1 only)
+  template: src=hosts.j2 dest=/etc/hosts
+  when: ansible_distribution == 'OracleLinux' and ansible_distribution_version == '7.1'
+
+- name: Reboot server and waiting for come back
+  reboot:

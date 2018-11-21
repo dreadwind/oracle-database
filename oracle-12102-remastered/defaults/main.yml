@@ -1,0 +1,69 @@
+old_mount: /opt
+vg_name: oracle
+lv_name: oracle
+volume_fs: xfs
+oracle_mount: /opt/u01
+
+oracle:
+  group:    oinstall
+  user:     oracle
+  password: Passw0rd2017
+  dbagroup: dba
+
+oracledb_base_location:         /opt/u01/oracle
+oracledb_home_location:         /opt/u01/product/12.1
+oracledb_inventory_location:    /opt/u01/oraInventory
+oracledb_base_name: sfr_dev
+oracledb_sid: sfr_dev
+oracledb_base_password: Passw0rd
+oracledb_admin_password: Passw0rd2017
+oracledb_user_password: qwerty1@
+oracledb_port: 1521
+
+oracle_required_packages:
+    - gcc
+    - libaio
+    - libaio-devel
+    - sysstat
+    - elfutils-libelf-devel
+    - libstdc++
+    - libstdc++-devel
+    - gcc-c++
+    - unixODBC
+    - unixODBC-devel
+    - compat-libstdc++-33
+    - unzip
+    - ksh
+    - psmisc
+    - nfs-utils
+
+oracle_sysctl_params:
+    - { n: 'net.ipv6.conf.all.disable_ipv6', v: 0 }
+    - { n: 'net.ipv6.conf.default.disable_ipv6', v: 1 }
+    - { n: 'net.ipv4.conf.all.accept_source_route', v: 0 }
+    - { n: 'net.ipv4.conf.default.accept_source_route', v: 0 }
+    - { n: 'net.core.netdev_max_backlog',  v: 10000 }
+    - { n: 'net.ipv4.tcp_max_syn_backlog', v: 1024 }
+    - { n: 'net.ipv4.tcp_max_tw_buckets', v: 72000 }
+    - { n: 'net.ipv4.tcp_tw_reuse', v: 1 }
+    - { n: 'net.ipv4.tcp_tw_recycle', v: 1 }
+    - { n: 'net.ipv4.tcp_fin_timeout', v: 30 }
+    - { n: 'net.ipv4.tcp_keepalive_time', v: 1800 }
+    - { n: 'net.ipv4.tcp_keepalive_probes', v: 7 }
+    - { n: 'net.ipv4.tcp_keepalive_intvl', v: 30 }
+    - { n: 'net.core.wmem_default', v: 4194394 }
+    - { n: 'net.core.rmem_default', v: 8388608 }  
+    - { n: 'kernel.shmall', v: 4294967296 }                                                                                                                                                                  
+    - { n: 'kernel.shmmni', v: 4096 }
+    - { n: 'kernel.sem', v: 250 32000 100 128 }
+    - { n: 'fs.file-max', v: 6815744 }
+    - { n: 'net.ipv4.ip_local_port_range', v: 9000 65500 }
+    - { n: 'net.core.rmem_default', v: 262144 }
+    - { n: 'net.core.wmem_default', v: 262144 }
+    - { n: 'net.core.rmem_max', v:  4194304 }
+    - { n: 'net.core.wmem_max', v: 1048576 }
+    - { n: 'fs.aio-max-nr', v: 1048576 }
+
+oracle_db_zip: oracle_12102.zip
+oracle_patch_zip: ora_patch_12102.zip
+nfs_sd: /nfs/OrcleDB-120102

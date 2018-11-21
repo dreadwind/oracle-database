@@ -1,0 +1,6 @@
+ALTER SYSTEM SET "_allow_insert_with_update_check"=TRUE scope=spfile;
+ALTER SYSTEM set sec_case_sensitive_logon=FALSE scope=spfile;
+shu immediate
+startup
+alter user sys identified by {{ oracledb_admin_password }};
+alter user system identified by {{ oracledb_admin_password }};

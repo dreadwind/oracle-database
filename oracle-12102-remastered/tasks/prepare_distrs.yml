@@ -1,0 +1,10 @@
+---
+- name: Check  zip in tmp
+  stat: path=/tmp/{{ oracle_db_zip }}
+  register: zip_db_checked
+  
+- name: Copy DB zip to destination
+  copy: src={{ nfs_sd }}/{{ oracle_db_zip }} dest=/tmp/{{ oracle_db_zip }}
+
+- name: Unzip DB image
+  unarchive: src=/tmp/{{ oracle_db_zip }} dest=/tmp remote_src=yes owner={{ oracle.user }} group={{ oracle.dbagroup }} mode=0755
