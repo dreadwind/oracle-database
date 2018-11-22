@@ -3,20 +3,20 @@
   yum: name={{ item }} state=present
   with_items: "{{ oracle_required_packages }}"
   tags: pkg_installed
-  
-#- name: Prepare sysctl params
-#  template: src=sysctl.conf.j2 dest=/etc/sysctl.conf
 
-- name: Set sysctl on {{ ansible_hostname }}  
+- name: Remove old sysctl.conf on {{ ansible_hostname }}
+  file: 
+    path: /etc/sysctl.conf 
+    state: absent
+
+- name: Create empty sysctl.conf on {{ ansible_hostname }}
+  file:  path=/etc/sysctl.conf state=touch owner=root group=root mode=0644
+
+- name: Set buity sysctl on {{ ansible_hostname }}  
   sysctl: name={{ item.n }} value={{ item.v }} state=present reload=yes
   with_items: "{{ oracle_sysctl_params }}"
 
-#- name: Configure SHM
-#  lineinfile:
-#    path: /etc/fstab
-#    line: 'none /dev/shm tmpfs defaults,size=16G 0 0'
-  
-- name: Add oracle system user and groups
+- name: Add oracle system user and groups on {{ ansible_hostname }}
   group:
     name: "{{ oracle.dbagroup }}"
     state: present
@@ -48,6 +48,9 @@
 - name: Update /etc/hosts (for OEL 7.1 only)
   template: src=hosts.j2 dest=/etc/hosts
   when: ansible_distribution == 'OracleLinux' and ansible_distribution_version == '7.1'
+
+- name: Create tag file after prepare task on {{ ansible_hostname }}
+  file: path=/tmp/server_prepared.tag state=touch owner=root group=root mode=0644
 
 - name: Reboot server and waiting for come back
   reboot:

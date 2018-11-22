@@ -8,3 +8,6 @@
 
 - name: Unzip DB image
   unarchive: src=/tmp/{{ oracle_db_zip }} dest=/tmp remote_src=yes owner={{ oracle.user }} group={{ oracle.dbagroup }} mode=0755
+
+- name: Create tag file after distrs task on {{ ansible_hostname }}
+  file: path=/tmp/distrs_prepared.tag state=touch owner=root group=root mode=0644

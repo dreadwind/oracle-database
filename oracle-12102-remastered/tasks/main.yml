@@ -1,15 +1,35 @@
 ---
-#- name: Prepare lvm for installation
-#  include_tasks: ensure_lvm_status.yml
+- name: Cheking lvm tag file on {{ ansible_hostname }}
+  stat: path=/tmp/lvm_created.tag
+  register: lvm
 
-#- name: Prepare Server for installation
-#  include_tasks: prepare_server.yml
+- name: Prepare lvm for installation on {{ ansible_hostname }}
+  include_tasks: ensure_lvm_status.yml
+  when: lvm.stat.exists == false
 
-#- name: Prepare disribitives
-#  include_tasks: prepare_distrs.yml
+- name: Checking preparing tag file on {{ ansible_hostname }}
+  stat: path=/tmp/server_prepared.tag
+  register: srv_prepared
 
-- name: Install Oracle Database
+- name: Prepare server for installation on {{ ansible_hostname }}
+  include_tasks: prepare_server.yml
+  when: srv_prepared.stat.exists == false
+
+- name: Checking distrs tag file on {{ ansible_hostname }}
+  stat: path=/tmp/distrs_prepared.tag
+  register: distrs_prepared
+
+- name: Prepare disributives on {{ ansible_hostname }}
+  include_tasks: prepare_distrs.yml
+  when: distrs_prepared.stat.exists == false
+
+- name: Checking ora install tag file on {{ ansible_hostname }}
+  stat: path=/tmp/oradb_installed.tag
+  register: oradb_installed
+
+- name: Install Oracle Database on {{ ansible_hostname }}
   include_tasks: install_oradb.yml
+  when: oradb_installed.stat.exists == false
 
-- name: Post Instalaltion Actions
+- name: Post Instalaltion Actions on {{ ansible_hostname }}
   include_tasks: post_install.yml

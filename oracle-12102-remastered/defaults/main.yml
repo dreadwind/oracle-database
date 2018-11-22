@@ -7,17 +7,17 @@ oracle_mount: /opt/u01
 oracle:
   group:    oinstall
   user:     oracle
-  password: Passw0rd2017
+  password: <password/>
   dbagroup: dba
 
 oracledb_base_location:         /opt/u01/oracle
 oracledb_home_location:         /opt/u01/product/12.1
 oracledb_inventory_location:    /opt/u01/oraInventory
-oracledb_base_name: sfr_dev
-oracledb_sid: sfr_dev
-oracledb_base_password: Passw0rd
-oracledb_admin_password: Passw0rd2017
-oracledb_user_password: qwerty1@
+oracledb_base_name: <name/>
+oracledb_sid: <sid/>
+oracledb_base_password: <password/>
+oracledb_admin_password: <password/>
+oracledb_user_password: <password/>
 oracledb_port: 1521
 
 oracle_required_packages:

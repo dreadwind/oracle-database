@@ -54,5 +54,9 @@
     fstype: "{{ volume_fs }}"
   tags: volume_mounted
 
+- name: Create tag file after lvm task on {{ ansible_hostname }}
+  file: path=/tmp/lvm_created.tag state=touch owner=root group=root mode=0644
+  
+
 - name: Reboot server for checking mount
   reboot:

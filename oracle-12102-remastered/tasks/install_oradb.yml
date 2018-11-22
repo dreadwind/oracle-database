@@ -1,19 +1,19 @@
 ---
-#- name: Preparing database installation template
-#  template: src=db_install.rsp.j2 dest={{ oracledb_home_location }}/db_install.rsp owner={{ oracle.user }} group={{ oracle.dbagroup }} mode=0655
+- name: Preparing database installation template on {{ ansible_hostname }}
+  template: src=db_install.rsp.j2 dest={{ oracledb_home_location }}/db_install.rsp owner={{ oracle.user }} group={{ oracle.dbagroup }} mode=0655
 
-#- name: Install oracle on {{ ansible_hostname }} with rsp
-#  command: sudo -H -u oracle /tmp/database/runInstaller -silent -waitForCompletion -showProgress -ignorePrereq  -ignoreSysPrereqs -responseFile "{{ oracledb_home_location }}"/db_install.rsp 
+- name: Install oracle on {{ ansible_hostname }} with rsp
+  command: sudo -H -u oracle /tmp/database/runInstaller -silent -waitForCompletion -showProgress -ignorePrereq  -ignoreSysPrereqs -responseFile "{{ oracledb_home_location }}"/db_install.rsp 
 
-#- name: Run install prepare script
-#  shell: "{{oracledb_inventory_location }}/orainstRoot.sh"
-#  become: yes
-#  become_user: root
+- name: Run install prepare script
+  shell: "{{oracledb_inventory_location }}/orainstRoot.sh"
+  become: yes
+  become_user: root
 
-#- name: Run root script
-#  shell: "{{ oracledb_home_location }}/root.sh"
-#  become: yes
-#  become_user: root
+- name: Run root script
+  shell: "{{ oracledb_home_location }}/root.sh"
+  become: yes
+  become_user: root
 
 - name: Preparing netca response file on {{ ansible_hostname }}
   template: src=netca.rsp.j2 dest={{ oracledb_home_location }}/netca.rsp owner={{ oracle.user }} group={{ oracle.dbagroup }} mode=0644
@@ -21,28 +21,20 @@
 - name: Apply netca settings on {{ ansible_hostname }}
   become: yes
   become_user: "{{ oracle.user }}"
-#  sudo: no
   shell:  source /home/{{ oracle.user }}/.bashrc  netca -responsefile {{ oracledb_home_location }}/netca.rsp -silent
-#  command: sudo -H -u oracle netca -responsefile {{ oracledb_home_location }}/netca.rsp -silent 
 
 - name: Prepare dbca response file on {{ ansible_hostname }}
   template: src=dbca.rsp.j2 dest={{ oracledb_home_location }}/dbca.rsp owner={{ oracle.user }} group={{ oracle.dbagroup }} mode=0644
 
 - name: Apply dbca settings on {{ ansible_hostname }}
-#  sudo: no
-  become: yes 
-  become_user: "{{ oracle.user }}"
-  shell: source /home/{{ oracle.user }}/.bashrc dbca -silent -createDatabase -responseFile {{ oracledb_home_location }}/dbca.rsp 
-#  command: sudo -H -u oracle  dbca -silent -createDatabase -responseFile {{ oracledb_home_location }}/dbca.rsp
+  command:  sudo -H -u oracle {{ oracledb_home_location }}/bin/dbca -silent -responseFile {{ oracledb_home_location }}/dbca.rsp 
               
 - name: Stop listener
-#  sudo: no
   become: yes
   become_user: "{{ oracle.user }}"
   shell: source /home/{{ oracle.user }}/.bashrc lsnrctl stop 
 
 - name: Start listener
-#  sudo: no
   become: yes
   become_user: "{{ oracle.user }}"
   shell: source /home/{{ oracle.user }}/.bashrc lsnrctl start
@@ -50,8 +42,10 @@
 - name: Preparing grants
   template: src=grants.sql.j2 dest={{ oracledb_home_location }}/grants.sql owner={{ oracle.user }} group={{ oracle.dbagroup }} mode=0644
 
-- name: Grant rights
+- name: Grant rights on {{ oracledb_base_name }}
   become: yes
   become_user: "{{ oracle.user }}"
-#  sudo: no
   shell: source /home/{{ oracle.user }}/.bashrc sqlplus / as sysdba {{ oracledb_home_location }}/grants.sql
+
+- name: Create tag file after install task on {{ ansible_hostname }}
+  file: path=/tmp/oradb_installed.tag state=touch owner=root group=root mode=0644
